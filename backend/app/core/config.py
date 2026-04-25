@@ -1,8 +1,31 @@
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+def get_base_path():
+    """获取基础路径（支持 PyInstaller 打包）"""
+    if getattr(sys, 'frozen', False):
+        # PyInstaller 打包后
+        return Path(sys._MEIPASS)
+    return Path(__file__).parent
+
+def get_app_path():
+    """获取应用运行路径"""
+    if getattr(sys, 'frozen', False):
+        return Path(sys.executable).parent
+    return Path(__file__).parent
+
+# 尝试加载 .env
+base_path = get_app_path()
+env_files = [
+    base_path / ".env",
+    Path.cwd() / ".env",
+]
+for env_file in env_files:
+    if env_file.exists():
+        load_dotenv(env_file)
+        break
 
 class Config:
     """配置管理"""

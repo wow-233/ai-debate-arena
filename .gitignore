@@ -22,6 +22,8 @@ env/
 *.spec.bak
 *.manifest
 *.manifest.bak
+dist/
+build/
 
 # IDE
 .idea/
@@ -44,6 +46,10 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# 编译产物
+dist/           # PyInstaller 输出
+build/          # PyInstaller 临时文件
 
 # Node (前端)
 node_modules/

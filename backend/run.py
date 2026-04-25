@@ -1,12 +1,24 @@
 """
-AI Debate Arena - 打包入口
+AI Debate Arena - Launcher entry
 """
 import os
 import sys
 import logging
+import io
+from pathlib import Path
+
+# 修复 Windows 控制台编码
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 # 添加项目路径
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+if getattr(sys, 'frozen', False):
+    # PyInstaller 打包后，exe 同目录
+    app_path = Path(sys.executable).parent
+else:
+    # 源码运行
+    app_path = Path(__file__).parent
+
+sys.path.insert(0, str(app_path))
 
 from app.core.config import Config
 import uvicorn
@@ -20,31 +32,37 @@ def main():
     )
     
     print("=" * 50)
-    print("AI Debate Arena - 多智能体 AI 辩论系统")
+    print("AI Debate Arena - Multi-Agent AI Debate System")
     print("=" * 50)
     
     # 检查配置
     if not Config.OPENAI_API_KEY:
-        print("\n⚠️  警告: OPENAI_API_KEY 未配置")
-        print("请创建 .env 文件或设置环境变量")
-        print("示例配置见 .env.example\n")
+        print("\n[WARNING] OPENAI_API_KEY not configured")
+        print("Please create .env file or set environment variable")
+        print("See .env.example for reference\n")
     
     if not Config.OBSIDIAN_VAULT_PATH:
-        print("⚠️  警告: OBSIDIAN_VAULT_PATH 未配置")
-        print("Obsidian 集成功能将不可用\n")
+        print("[WARNING] OBSIDIAN_VAULT_PATH not configured")
+        print("Obsidian integration will be disabled\n")
     
-    print(f"API 文档: http://localhost:{Config.PORT}/docs")
-    print(f"健康检查: http://localhost:{Config.PORT}/health")
+    print(f"API docs: http://localhost:{Config.PORT}/docs")
+    print(f"Health check: http://localhost:{Config.PORT}/health")
     print("-" * 50)
-    print("按 Ctrl+C 停止服务")
+    print("Press Ctrl+C to stop")
     print("=" * 50 + "\n")
     
+    # 检查必需配置
+    if not Config.OPENAI_API_KEY:
+        print("[ERROR] OPENAI_API_KEY is required. Exiting.")
+        sys.exit(1)
+    
     # 启动服务
+    import app.main
     uvicorn.run(
-        "app.main:app",
+        app.main.app,  # 直接传入 app 对象
         host=Config.HOST,
         port=Config.PORT,
-        reload=False,  # 打包后禁用 reload
+        reload=False,
         log_level="info",
     )
 

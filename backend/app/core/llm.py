@@ -67,7 +67,7 @@ class LLMClient:
                 full_content += chunk.choices[0].delta.content
                 yield chunk.choices[0].delta.content
         
-        return full_content
+        # 注意：async generator 不能有 return 语句
     
     async def chat_with_system(
         self,
