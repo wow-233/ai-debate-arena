@@ -1,13 +1,21 @@
-"""Skills package - 可复用技能模块"""
-from .base import SkillBase, SkillConfig
-from .llm import LLMSkill
-from .debate import DebateSkill
-from .obsidian import ObsidianSkill
+"""Skills package"""
+__version__ = "1.0.0"
+
+from .base import SkillBase, SkillConfig, RunnableSkill, SkillResult
+from .llm import LLMSkill, MultiModelLLM
+from .debate import DebateSkill, DebateRole, DebateState
+from .obsidian import ObsidianSkill, NoteInfo
 
 __all__ = [
     "SkillBase",
     "SkillConfig",
+    "RunnableSkill",
+    "SkillResult",
     "LLMSkill",
+    "MultiModelLLM",
     "DebateSkill",
+    "DebateRole",
+    "DebateState",
     "ObsidianSkill",
+    "NoteInfo",
 ]
